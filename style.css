@@ -60,6 +60,8 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
   font-family: "PT Serif", serif;
   font-size: 11px;
   letter-spacing: 0.12em;
@@ -81,7 +83,7 @@ a {
 .nameplate h1 {
   font-family: "UnifrakturCook", serif;
   font-weight: 700;
-  font-size: clamp(46px, 9vw, 84px);
+  font-size: clamp(40px, 12vw, 84px);
   margin: 0;
   line-height: 1;
   letter-spacing: 0.01em;
@@ -95,6 +97,7 @@ a {
   font-size: 14px;
   color: var(--ink-soft);
   letter-spacing: 0.03em;
+  padding: 0 8px;
 }
 
 .rule-triple {
@@ -105,6 +108,8 @@ a {
 .masthead-bottom {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -124,7 +129,7 @@ a {
 .hero-headline {
   font-family: "Playfair Display", serif;
   font-weight: 900;
-  font-size: clamp(34px, 6vw, 58px);
+  font-size: clamp(30px, 8vw, 58px);
   line-height: 1.05;
   text-align: center;
   margin: 0 0 6px;
@@ -139,7 +144,7 @@ a {
   font-family: "Playfair Display", serif;
   font-style: italic;
   color: var(--ink-soft);
-  font-size: 17px;
+  font-size: 16px;
   margin: 0 0 26px;
 }
 
@@ -166,6 +171,8 @@ a {
   color: var(--ink-soft);
   text-align: center;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
 }
 .ph .ph-icon {
   font-size: 22px;
@@ -186,15 +193,38 @@ a {
   aspect-ratio: 16/10;
 }
 
+/* Make a real <img> or <video> dropped into .ph fill the box responsively,
+   cropped to whatever aspect-ratio that section defines. */
+.ph img,
+.ph video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #000;
+}
+/* Hide the placeholder icon/label once a real photo/video is present */
+.ph:has(img) .ph-icon,
+.ph:has(img) .ph-size,
+.ph:has(img) .ph-ratio,
+.ph:has(video) .ph-icon,
+.ph:has(video) .ph-size,
+.ph:has(video) .ph-ratio {
+  display: none;
+}
+
 /* ---------- COUPLE PROFILES ---------- */
 .couple {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
+  gap: 16px;
   margin: 6px 0 44px;
 }
 .profile {
   text-align: center;
+  min-width: 0;
 }
 .profile .ph {
   aspect-ratio: 4/5;
@@ -211,16 +241,8 @@ a {
 .profile .name {
   font-family: "Playfair Display", serif;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 18px;
   color: var(--ink);
-}
-.couple-divider {
-  text-align: center;
-  font-family: "Playfair Display", serif;
-  font-style: italic;
-  font-size: 14px;
-  color: var(--ink-soft);
-  margin: -24px 0 30px;
 }
 figcaption {
   font-size: 12.5px;
@@ -254,7 +276,7 @@ figcaption {
 }
 .story h2 {
   font-family: "Playfair Display", serif;
-  font-size: 26px;
+  font-size: 24px;
   margin: 0 0 14px;
   break-after: avoid;
 }
@@ -304,6 +326,7 @@ figcaption {
   padding: 22px 20px;
   text-align: center;
   border-bottom: 1px solid var(--rule);
+  min-width: 0;
 }
 @media (min-width: 640px) {
   .details-item {
@@ -323,8 +346,9 @@ figcaption {
 }
 .details-item .v {
   font-family: "Playfair Display", serif;
-  font-size: 18px;
+  font-size: 17px;
   color: var(--ink);
+  word-wrap: break-word;
 }
 .details-item .v small {
   display: block;
@@ -333,6 +357,33 @@ figcaption {
   color: var(--ink-soft);
   margin-top: 4px;
   font-style: italic;
+}
+
+/* ---------- MAP ---------- */
+.map-embed {
+  margin: -14px 0 40px;
+  border: 1px solid var(--ink);
+  background: var(--bg-raised);
+}
+.map-embed iframe {
+  display: block;
+  width: 100%;
+  filter: grayscale(85%) contrast(1.05);
+}
+.map-link {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  font-weight: 700;
+  text-decoration: none;
+  border-top: 1px solid var(--rule);
+}
+.map-link:hover {
+  color: var(--ink);
 }
 
 /* ---------- COUNTDOWN ---------- */
@@ -368,18 +419,18 @@ figcaption {
 .countdown-grid .num {
   font-family: "Playfair Display", serif;
   font-weight: 900;
-  font-size: clamp(26px, 5vw, 38px);
+  font-size: clamp(24px, 6vw, 38px);
   color: var(--accent-deep);
   display: block;
 }
 .countdown-grid .lbl {
-  font-size: 10px;
+  font-size: 9.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-soft);
 }
 
-/* ---------- GALLERY / PHOTO ESSAY ---------- */
+/* ---------- SECTION TITLES ---------- */
 .section-title {
   text-align: center;
   margin: 6px 0 26px;
@@ -394,87 +445,44 @@ figcaption {
 }
 .section-title h2 {
   font-family: "Playfair Display", serif;
-  font-size: 28px;
+  font-size: 26px;
   margin: 0;
 }
+
+/* ---------- GALLERY (photos + video) ---------- */
 .gallery {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
   margin-bottom: 40px;
 }
 .gallery .ph {
+  aspect-ratio: 1/1;
   border: 1px solid var(--bg);
-  height: 100%;
   min-width: 0;
-}
-.gallery .g1 {
-  grid-column: span 4;
-}
-.gallery .g1 .ph {
-  aspect-ratio: 4/3;
-}
-.gallery .g2 {
-  grid-column: span 2;
-}
-.gallery .g2 .ph {
-  aspect-ratio: 1/1;
-}
-.gallery .g3 {
-  grid-column: span 2;
-}
-.gallery .g3 .ph {
-  aspect-ratio: 1/1;
-}
-.gallery .g4 {
-  grid-column: span 2;
-}
-.gallery .g4 .ph {
-  aspect-ratio: 1/1;
-}
-.gallery .g5 {
-  grid-column: span 2;
-}
-.gallery .g5 .ph {
-  aspect-ratio: 1/1;
 }
 @media (max-width: 640px) {
   .gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .gallery .g1,
-  .gallery .g2,
-  .gallery .g3,
-  .gallery .g4,
-  .gallery .g5 {
-    grid-column: span 1;
-  }
 }
 
-/* ---------- VIDEO ---------- */
-.video-section {
-  margin-bottom: 44px;
-  display: flex;
-  justify-content: center;
+.g-video .ph {
+  background: #000;
 }
-.video-ph {
-  aspect-ratio: 9/16;
-  width: 100%;
-  max-width: 340px;
-  position: relative;
-}
-.play-btn {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 2px solid var(--ink);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: var(--ink);
-  background: var(--bg);
-  margin-bottom: 4px;
+.video-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  z-index: 3;
+  background: rgba(23, 20, 15, 0.75);
+  color: #fff;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 3px;
+  pointer-events: none;
 }
 
 /* ---------- ACCESS CARD (PRIVATE SEATING TICKET) ---------- */
@@ -508,7 +516,7 @@ figcaption {
 .ticket-name {
   font-family: "Playfair Display", serif;
   font-weight: 700;
-  font-size: 26px;
+  font-size: 24px;
   line-height: 1.15;
   margin-bottom: 18px;
   word-break: break-word;
@@ -805,6 +813,7 @@ footer .fc {
   font-size: 11px;
   color: var(--ink-soft);
   letter-spacing: 0.06em;
+  padding: 0 12px;
 }
 
 @media (prefers-reduced-motion: reduce) {
