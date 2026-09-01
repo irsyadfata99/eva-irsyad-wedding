@@ -10,9 +10,38 @@
       href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,900;1,500;1,600&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css?v=4" />
   </head>
-  <body>
+  <body class="locked">
+    <!-- OPENING COVER -->
+    <div class="cover" id="cover">
+      <div class="cover-inner">
+        <div class="cover-eyebrow">Wedding Invitation</div>
+        <div class="cover-names">Irsyad &amp; Eva</div>
+        <div class="cover-divider"></div>
+        <div class="cover-to">
+          <span class="cover-to-label">Kepada Yth.</span>
+          <span class="cover-to-name" id="cover-guest-name"
+            >Bapak/Ibu/Saudara/i</span
+          >
+        </div>
+        <button class="cover-btn" id="cover-open-btn">
+          <span>✉</span> Buka Undangan
+        </button>
+      </div>
+    </div>
+
+    <!-- BACKGROUND MUSIC -->
+    <audio id="bg-music" src="assets/music-1.mp3" loop preload="none"></audio>
+    <button
+      class="music-toggle"
+      id="music-toggle"
+      aria-label="Putar/jeda musik latar"
+      aria-pressed="false"
+    >
+      <span class="music-icon">♪</span>
+    </button>
+
     <div class="wrap">
       <!-- MASTHEAD -->
       <header class="masthead">
@@ -75,17 +104,14 @@
       <!-- STORY -->
       <section class="story">
         <div class="eyebrow">Our Story</div>
-        <h2>Dari Teman Sekelas Menjadi Sepasang Kekasih</h2>
+        <h2>Our love journey</h2>
         <p class="lead">
-          Pertemuan kami berawal dari bangku sekolah, ketika tak seorang pun
-          menyangka pertemanan biasa akan bertumbuh menjadi cinta yang bertahan
-          bertahun-tahun. Kini, setelah melewati suka duka bersama, kami
-          memutuskan untuk melangkah ke babak baru.
-        </p>
-        <p>
-          Dengan penuh rasa syukur, kami mengundang Bapak/Ibu/Saudara/i untuk
-          turut mendoakan dan menyaksikan hari bahagia kami. Kehadiran Anda
-          adalah hadiah paling berharga bagi kami berdua.
+          Januari 2023, dua orang asing bertemu di Cerdas Dini dan menemukan
+          nyaman dalam obrolan-obrolan sederhana. Waktu membawa kami dari
+          sekadar mengenal menjadi saling memilih, hingga kami sadar that
+          perhaps, some people are simply meant to find their way to each other.
+          Oktober 2025 menjadi awal dari babak baru, dan kini kami siap
+          melanjutkan cerita ini—together, wherever life takes us.
         </p>
       </section>
 
@@ -157,23 +183,11 @@
         </div>
       </div>
 
-      <!-- GALLERY (photos + video together) -->
+      <!-- GALLERY (photos only) -->
       <div class="section-title">
         <h2>Captured Moments</h2>
       </div>
       <div class="gallery">
-        <div class="g-item g-video">
-          <div class="ph">
-            <video
-              src="assets/video-1.mp4"
-              poster="assets/video-1-poster.jpg"
-              controls
-              playsinline
-              preload="metadata"
-            ></video>
-            <span class="video-badge">▶ Video</span>
-          </div>
-        </div>
         <div class="g-item">
           <div class="ph">
             <img src="assets/image-2.jpg" alt="" />
@@ -182,6 +196,11 @@
         <div class="g-item">
           <div class="ph">
             <img src="assets/image-4.jpg" alt="" />
+          </div>
+        </div>
+        <div class="g-item">
+          <div class="ph">
+            <img src="assets/image-5.jpg" alt="" />
           </div>
         </div>
         <div class="g-item">
@@ -198,6 +217,26 @@
           <div class="ph">
             <img src="assets/image-12.jpg" alt="" />
           </div>
+        </div>
+      </div>
+
+      <!-- VIDEO (own section, portrait) -->
+      <div class="section-title">
+        <div class="eyebrow">Watch</div>
+        <h2>Our Video</h2>
+      </div>
+      <div class="video-section">
+        <div class="ph video-ph">
+          <video
+            id="gallery-video"
+            src="assets/video-1.mp4"
+            poster="assets/video-1-poster.jpg"
+            controls
+            muted
+            loop
+            playsinline
+            preload="metadata"
+          ></video>
         </div>
       </div>
 
@@ -266,6 +305,6 @@
       </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=5"></script>
   </body>
 </html>

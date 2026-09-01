@@ -1,12 +1,102 @@
-// ---------- Live comment form ("Ucapan & Doa untuk Mempelai") ----------
-const letterForm = document.getElementById("letter-form");
-const lettersList = document.getElementById("letters-list");
+// ---------- Shared: read guest info from the invitation link ----------
+// ?to=NamaTamu&meja=5
+const inviteParams = new URLSearchParams(window.location.search);
+const guestNameParam = inviteParams.get("to");
+const tableNumberParam = inviteParams.get("meja") || inviteParams.get("table");
 
 function escapeHTML(str) {
   const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
 }
+
+// ---------- Opening cover ----------
+(function () {
+  const cover = document.getElementById("cover");
+  const openBtn = document.getElementById("cover-open-btn");
+  const guestNameEl = document.getElementById("cover-guest-name");
+  const music = document.getElementById("bg-music");
+  const musicToggle = document.getElementById("music-toggle");
+
+  if (guestNameParam) {
+    guestNameEl.textContent = guestNameParam;
+  }
+
+  openBtn.addEventListener("click", function () {
+    cover.classList.add("opened");
+    document.body.classList.remove("locked");
+
+    // Try to start background music now that we have a user gesture.
+    // If there's no music file yet (or the browser blocks it), fail silently.
+    if (music) {
+      music.play().then(
+        function () {
+          musicToggle.classList.add("playing");
+          musicToggle.setAttribute("aria-pressed", "true");
+        },
+        function () {
+          /* no file yet / autoplay blocked — ignore */
+        },
+      );
+    }
+
+    window.setTimeout(function () {
+      cover.style.display = "none";
+    }, 700);
+  });
+})();
+
+// ---------- Music toggle ----------
+(function () {
+  const music = document.getElementById("bg-music");
+  const musicToggle = document.getElementById("music-toggle");
+  if (!music || !musicToggle) return;
+
+  musicToggle.addEventListener("click", function () {
+    if (music.paused) {
+      music.play().then(
+        function () {
+          musicToggle.classList.add("playing");
+          musicToggle.setAttribute("aria-pressed", "true");
+        },
+        function () {
+          /* file missing or playback blocked — ignore */
+        },
+      );
+    } else {
+      music.pause();
+      musicToggle.classList.remove("playing");
+      musicToggle.setAttribute("aria-pressed", "false");
+    }
+  });
+})();
+
+// ---------- Gallery video: autoplay (muted) when scrolled into view ----------
+(function () {
+  const galleryVideo = document.getElementById("gallery-video");
+  if (!galleryVideo || !("IntersectionObserver" in window)) return;
+
+  const observer = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          galleryVideo.play().catch(function () {
+            /* browser blocked it — user can still tap play manually */
+          });
+        } else {
+          galleryVideo.pause();
+        }
+      });
+    },
+    { threshold: 0.5 },
+  );
+
+  observer.observe(galleryVideo);
+})();
+
+// ---------- Live comment form ("Ucapan & Doa untuk Mempelai") ----------
+const letterForm = document.getElementById("letter-form");
+const lettersList = document.getElementById("letters-list");
 
 letterForm.addEventListener("submit", function (e) {
   e.preventDefault();
@@ -56,12 +146,9 @@ tick();
 setInterval(tick, 1000);
 
 // ---------- Personalized access card ----------
-// Reads ?to=NamaTamu&meja=5 from the invitation link and renders
+// Reuses the guest name / table number already parsed above, and renders
 // either a personalized seating ticket, or a "private invitation" lock state.
 (function () {
-  const params = new URLSearchParams(window.location.search);
-  const guestName = params.get("to");
-  const tableNumber = params.get("meja") || params.get("table");
   const wrap = document.getElementById("access-wrap");
 
   function makeCode(name, table) {
@@ -73,9 +160,9 @@ setInterval(tick, 1000);
     return `WT-${table}-${suffix}`;
   }
 
-  if (guestName && tableNumber) {
-    const safeName = escapeHTML(guestName);
-    const safeTable = escapeHTML(tableNumber);
+  if (guestNameParam && tableNumberParam) {
+    const safeName = escapeHTML(guestNameParam);
+    const safeTable = escapeHTML(tableNumberParam);
     wrap.innerHTML = `
       <div class="ticket">
         <div class="ticket-main">
@@ -92,7 +179,7 @@ setInterval(tick, 1000);
           <div class="stub-label">Table</div>
           <div class="stub-table">${safeTable}</div>
           <div class="stub-barcode"></div>
-          <div class="stub-code">${makeCode(guestName, tableNumber)}</div>
+          <div class="stub-code">${makeCode(guestNameParam, tableNumberParam)}</div>
         </div>
       </div>
       <div class="access-cta">
