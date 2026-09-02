@@ -958,6 +958,23 @@ figcaption {
   }
 }
 
+.rsvp-note {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin: 0 0 12px;
+}
+.rsvp-group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rsvp-group .rsvp-btn {
+  flex: 1 1 140px;
+  max-width: 200px;
+}
+
 /* ---------- FOOTER ---------- */
 footer {
   border-top: 3px double var(--ink);

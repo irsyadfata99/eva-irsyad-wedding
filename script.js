@@ -236,9 +236,30 @@ setInterval(tick, 1000);
     return `WT-${table}-${suffix}`;
   }
 
+  // Nomor WhatsApp Irsyad & Eva untuk menerima konfirmasi RSVP tamu.
+  // Format: kode negara + nomor, tanpa "+" atau "0" di depan.
+  const RSVP_CONTACTS = [
+    { label: "Irsyad", phone: "6281318465501" },
+    { label: "Eva", phone: "62895110010746" },
+  ];
+
+  function makeRsvpLink(phone, name, table) {
+    const message =
+      `Assalamu'alaikum, saya *${name}*` +
+      (table ? ` (Meja ${table})` : "") +
+      `.\nDengan ini saya konfirmasi *InsyaAllah hadir* di pernikahan Irsyad & Eva. 🙏`;
+    return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  }
+
   if (guestNameParam && tableNumberParam) {
     const safeName = escapeHTML(guestNameParam);
     const safeTable = escapeHTML(tableNumberParam);
+
+    const rsvpButtons = RSVP_CONTACTS.map(function (c) {
+      const link = makeRsvpLink(c.phone, guestNameParam, tableNumberParam);
+      return `<a class="rsvp-btn" href="${link}" target="_blank" rel="noopener">Konfirmasi ke ${c.label}</a>`;
+    }).join("");
+
     wrap.innerHTML = `
       <div class="ticket">
         <div class="ticket-main">
@@ -259,7 +280,8 @@ setInterval(tick, 1000);
         </div>
       </div>
       <div class="access-cta">
-        <a class="rsvp-btn" href="#">Confirm Attendance</a>
+        <p class="rsvp-note">Konfirmasi kehadiran ke:</p>
+        <div class="rsvp-group">${rsvpButtons}</div>
       </div>
     `;
   } else {
