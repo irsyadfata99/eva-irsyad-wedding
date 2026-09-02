@@ -95,19 +95,95 @@ function escapeHTML(str) {
 })();
 
 // ---------- Live comment form ("Ucapan & Doa untuk Mempelai") ----------
+// Backed by Supabase so every guest sees the same comment list.
+// Fill these in from Project Settings > API in your Supabase dashboard.
+const SUPABASE_URL = "https://kdojvhkasloeonrymqka.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_fh5yCbctAoI32MAcIHeZ0w_GlU140mG";
+
 const letterForm = document.getElementById("letter-form");
 const lettersList = document.getElementById("letters-list");
+const lettersSubmitBtn = letterForm.querySelector(".letters-submit");
 
-letterForm.addEventListener("submit", function (e) {
+const supabaseConfigured =
+  SUPABASE_URL !== "YOUR_SUPABASE_URL" &&
+  SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY" &&
+  typeof window.supabase !== "undefined";
+
+const supabaseClient = supabaseConfigured
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+function renderComment(name, message) {
+  const item = document.createElement("div");
+  item.className = "letter-item new";
+  item.innerHTML = `<div class="byline">${escapeHTML(name)}</div><p class="msg">${escapeHTML(message)}</p>`;
+  return item;
+}
+
+function showLettersEmptyState(text) {
+  lettersList.innerHTML = `<p class="letters-loading">${text}</p>`;
+}
+
+async function loadComments() {
+  if (!supabaseClient) {
+    showLettersEmptyState(
+      "Belum terhubung ke database — ucapan belum tersimpan permanen.",
+    );
+    return;
+  }
+  const { data, error } = await supabaseClient
+    .from("comments")
+    .select("name, message")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    showLettersEmptyState("Gagal memuat ucapan. Coba refresh halaman.");
+    return;
+  }
+  if (!data || data.length === 0) {
+    showLettersEmptyState(
+      "Jadilah yang pertama mengirim ucapan untuk mempelai!",
+    );
+    return;
+  }
+  lettersList.innerHTML = "";
+  data.forEach(function (c) {
+    lettersList.appendChild(renderComment(c.name, c.message));
+  });
+}
+loadComments();
+
+letterForm.addEventListener("submit", async function (e) {
   e.preventDefault();
   const name = document.getElementById("letter-name").value.trim();
   const message = document.getElementById("letter-message").value.trim();
   if (!name || !message) return;
 
-  const item = document.createElement("div");
-  item.className = "letter-item new";
-  item.innerHTML = `<div class="byline">${escapeHTML(name)}</div><p class="msg">${escapeHTML(message)}</p>`;
-  lettersList.prepend(item);
+  lettersSubmitBtn.disabled = true;
+
+  if (supabaseClient) {
+    const { error } = await supabaseClient
+      .from("comments")
+      .insert([{ name: name, message: message }]);
+
+    lettersSubmitBtn.disabled = false;
+
+    if (error) {
+      alert("Maaf, ucapan gagal terkirim. Coba lagi ya.");
+      return;
+    }
+    // Remove empty-state placeholder if this is the first comment
+    const emptyState = lettersList.querySelector(".letters-loading");
+    if (emptyState) emptyState.remove();
+    lettersList.prepend(renderComment(name, message));
+  } else {
+    // No database configured yet — fall back to local-only display
+    // (won't persist across refreshes or other guests).
+    lettersSubmitBtn.disabled = false;
+    const emptyState = lettersList.querySelector(".letters-loading");
+    if (emptyState) emptyState.remove();
+    lettersList.prepend(renderComment(name, message));
+  }
 
   letterForm.reset();
 });
